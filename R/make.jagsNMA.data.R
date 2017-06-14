@@ -9,10 +9,10 @@ make.jagsNMA.data=function(studyid,r,n,y,sd,t,type="cont", data, reference=1){
   #sd the standard deviations
   #type, character for "dich"or "cont"
   # data the dataset to use
-  
+
   ##---- Get data and re-name when needed ----#
- 
-   data$idd=eval(substitute(id), data)
+
+   data$idd=eval(substitute(studyid), data)
   data$tt=eval(substitute(t), data)
   n=data$n=eval(substitute(n), data)
   idd=data$idd
@@ -28,7 +28,7 @@ make.jagsNMA.data=function(studyid,r,n,y,sd,t,type="cont", data, reference=1){
     out<-cbind.data.frame("old names"=sort(unique(tt)),"new names"=sort(unique(t)))
     refer=sort(unique(t))[sort(unique(tt))==reference]
   print(out)}
- 
+
   maxnrofarms=max(table(idd))
    nofarms<-length(idd)
    armsenumerate=unlist(sapply(na,seq))
@@ -41,14 +41,14 @@ make.jagsNMA.data=function(studyid,r,n,y,sd,t,type="cont", data, reference=1){
   tmat2[tmat2==999]<-NA
   #t matrix to take forward and make the data matrices
   tmat[tmat==999]<-NA
- 
-  
+
+
   nmat<-matrix(-99,nrow=ns,ncol=nt)
   for(i in 1:nofarms){
   nmat[idd[i],t[i]]<-n[i]
   }
   nmat[nmat==-99]<-NA
-  
+
   if(type=="cont"){
     y=data$y=eval(substitute(y), data)
     sd=data$sd=eval(substitute(sd), data)
@@ -61,15 +61,15 @@ make.jagsNMA.data=function(studyid,r,n,y,sd,t,type="cont", data, reference=1){
     }
     ymat[ymat==9999]<-NA
     precmat[precmat==-99]<-NA
-    
+
     #calculate the study-specific pooled SD
     nominator=sqrt(tapply(n*sd*sd,idd, sum))
     denominator=sqrt(tapply(n,idd,sum)-na)
     pooled.sd=nominator/denominator
-    
+
     return(list(ns=ns,nt=nt,na=na,t=tmat2,y=ymat,prec=precmat,pooled.sd=pooled.sd,ref=reference))
     }
-  
+
   if(type=="binary"){
     r=data$r=eval(substitute(r), data)
     rmat<-matrix(-99,nrow=ns,ncol=nt)
@@ -79,6 +79,6 @@ make.jagsNMA.data=function(studyid,r,n,y,sd,t,type="cont", data, reference=1){
     rmat[rmat==-99]<-NA
     return(list(ns=ns,nt=nt,na=na,t=tmat2,r=rmat,n=nmat,ref=refer))
   }
- 
-#END 
+
+#END
 }
