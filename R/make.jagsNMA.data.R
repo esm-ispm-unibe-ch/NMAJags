@@ -1,13 +1,13 @@
 make.jagsNMA.data=
-function (studyid, r, n, y, sd, t, type = "cont", data, reference = 1,
-          othervar = NA)
+function (studyid, r, n, y, sd, t, type = "cont", data, reference = 1, 
+          othervar = NA) 
 {
   data$idd = eval(substitute(studyid), data)
   data$tt = eval(substitute(t), data)
   n = data$n = eval(substitute(n), data)
   idd = data$idd
   idd = as.numeric(as.factor(idd))
-  print(idd)####
+  print(idd)
   tt = data$tt
   ns = length(unique(idd))
   nt = length(unique(tt))
@@ -16,7 +16,7 @@ function (studyid, r, n, y, sd, t, type = "cont", data, reference = 1,
   t = as.numeric(as.factor(tt))
   if (!identical(t, tt)) {
     print("Note: the treatments have been renamed as follows")
-    out <- cbind.data.frame(`old names` = sort(unique(tt)),
+    out <- cbind.data.frame(`old names` = sort(unique(tt)), 
                             `new names` = sort(unique(t)))
     refer = sort(unique(t))[sort(unique(tt)) == reference]
     print(out)
@@ -37,18 +37,18 @@ function (studyid, r, n, y, sd, t, type = "cont", data, reference = 1,
   }
   nmat[nmat == -99] <- NA
   if (!missing(othervar)) {
-    variable = data$variable = eval(substitute(othervar),
+    variable = data$variable = eval(substitute(othervar), 
                                     data)
-    varmat <- matrix(-99, nrow = ns, ncol = nt)
+    varmat <- matrix(NA, nrow = ns, ncol = nt)
     for (i in 1:nofarms) {
       varmat[idd[i], t[i]] <- variable[i]
     }
-    varmat[varmat == -99] <- NA
+    varmat[is.na(varmat)] <- 0
   }
   if (type == "cont") {
     y = data$y = eval(substitute(y), data)
     sd = data$sd = eval(substitute(sd), data)
-    se=sd/sqrt(n)
+    se = sd/sqrt(n)
     prec = 1/(se * se)
     ymat <- matrix(9999, nrow = ns, ncol = nt)
     precmat <- matrix(-99, nrow = ns, ncol = nt)
@@ -62,13 +62,13 @@ function (studyid, r, n, y, sd, t, type = "cont", data, reference = 1,
     denominator = sqrt(tapply(n, idd, sum) - na)
     pooled.sd = nominator/denominator
     if (!missing(othervar)) {
-      toreturn = list(ns = ns, nt = nt, na = na, t = tmat2,
-                      y = ymat, prec = precmat, pooled.sd = pooled.sd,
-                      ref = refer, var = varmat)
+      toreturn = list(ns = ns, nt = nt, na = na, t = tmat2, 
+                      y = ymat, prec = precmat, pooled.sd = pooled.sd, 
+                      ref = refer, variab = apply(varmat,1,max))
     }
     else {
-      toreturn = list(ns = ns, nt = nt, na = na, t = tmat2,
-                      y = ymat, prec = precmat, pooled.sd = pooled.sd,
+      toreturn = list(ns = ns, nt = nt, na = na, t = tmat2, 
+                      y = ymat, prec = precmat, pooled.sd = pooled.sd, 
                       ref = refer)
     }
   }
@@ -80,11 +80,11 @@ function (studyid, r, n, y, sd, t, type = "cont", data, reference = 1,
     }
     rmat[rmat == -99] <- NA
     if (!missing(othervar)) {
-      toreturn = list(ns = ns, nt = nt, na = na, t = tmat2,
-                      r = rmat, n = nmat, ref = refer, var = varmat)
+      toreturn = list(ns = ns, nt = nt, na = na, t = tmat2, 
+                      r = rmat, n = nmat, ref = refer, variab =apply(varmat,1,max))
     }
     else {
-      toreturn = list(ns = ns, nt = nt, na = na, t = tmat2,
+      toreturn = list(ns = ns, nt = nt, na = na, t = tmat2, 
                       r = rmat, n = nmat, ref = refer)
     }
   }
