@@ -5,7 +5,8 @@ out.jagsNMA.results=function(JAGSobject,parameter=parameter,forestplot=F,treatna
   rowstokeep=startsWith(rowsmatching,parameter)
 
   resultstabletokeep=resultstable[rowstokeep,c(1,3,7,2)]
-  
+  rowstokeep2=startsWith(dimnames(resultstabletokeep)[[1]], paste(parameter,"[",sep=""))
+  resultstabletokeep=resultstabletokeep[rowstokeep2,]
   library(stringr)
   tosplit=unlist(strsplit(rownames(resultstabletokeep),","))
   tosplit2 <- as.numeric(str_extract(tosplit, "[0-9]+"))
