@@ -1,4 +1,4 @@
-out.jagsNMA.results=function(JAGSobject,parameter=parameter,forestplot=T){
+out.jagsNMA.results=function(JAGSobject,parameter=parameter,forestplot=F,treatnames=NA, rounding=3){
   resultstable=JAGSobject$BUGSoutput$summary
   allvariablenames=rownames(resultstable)
   rowsmatching=substr(allvariablenames,1,nchar(parameter))
@@ -27,7 +27,25 @@ for(i in 1:nrow(location)){
     slab2=a[lower.tri(a,F)]
     slab=paste(slab1,"vs",slab2,sep="")
   forest(x=meanmat[upper.tri(meanmat)], ci.lb=CImat[lower.tri(CImat)],ci.ub=CImat[upper.tri(CImat)], slab=slab,xlab="Network meta-analysis results")
-    }
+  }
+  meanmat=round(meanmat,rounding)
+ CImat=round(CImat,rounding)
 
-list(Means=meanmat,CI=CImat)
+ #create to print
+ Ttreat=dim(meanmat)[1]
+ toprintmat=matrix(nrow=Ttreat,ncol=Ttreat)
+
+ for(i in c(1:(Ttreat-1)))
+ {for (j in c((i+1):Ttreat))
+       {
+   toprintmat[i,j]=paste(meanmat[i,j],"(",CImat[j,i],",",CImat[i,j],")",sep="")
+   toprintmat[j,i]=paste(c(-meanmat[i,j]),"(",c(-CImat[i,j]),",",c(-CImat[j,i]),")",sep="")
+ }}
+ if(!missing(treatnames)){
+   diag(meanmat)=treatnames
+   diag(CImat)=treatnames
+   diag(toprintmat)=treatnames
+ }
+
+list(Means=meanmat,CI=CImat, leaguetable=toprintmat)
 }
