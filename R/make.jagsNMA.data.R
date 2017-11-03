@@ -1,6 +1,5 @@
-make.jagsNMA.data=
-function (studyid, r, n, y, sd, t, type = "cont", data, reference = 1, 
-          othervar = NA) 
+make.jagsNMA.data=function (studyid, r, n, y, sd, t, type = "cont", data, reference = 1, 
+          othervar = NA,summarize.othervar="max") 
 {
   data$idd = eval(substitute(studyid), data)
   data$tt = eval(substitute(t), data)
@@ -43,7 +42,7 @@ function (studyid, r, n, y, sd, t, type = "cont", data, reference = 1,
     for (i in 1:nofarms) {
       varmat[idd[i], t[i]] <- variable[i]
     }
-    varmat[is.na(varmat)] <- 0
+    varmat[is.na(varmat)] <- NA
   }
   if (type == "cont") {
     y = data$y = eval(substitute(y), data)
@@ -62,9 +61,13 @@ function (studyid, r, n, y, sd, t, type = "cont", data, reference = 1,
     denominator = sqrt(tapply(n, idd, sum) - na)
     pooled.sd = nominator/denominator
     if (!missing(othervar)) {
+      
+      if(summarize.othervar=="max"){variab1=apply(varmat, 1, max,na.rm=T)}
+      if(summarize.othervar=="min"){variab1=apply(varmat, 1, min,na.rm=T)}
+      if(summarize.othervar=="mean"){variab1=apply(varmat, 1, mean,na.rm=T)}
       toreturn = list(ns = ns, nt = nt, na = na, t = tmat2, 
                       y = ymat, prec = precmat, pooled.sd = pooled.sd, 
-                      ref = refer, variab = apply(varmat,1,max))
+                      ref = refer, variab = variab1)
     }
     else {
       toreturn = list(ns = ns, nt = nt, na = na, t = tmat2, 
@@ -80,13 +83,18 @@ function (studyid, r, n, y, sd, t, type = "cont", data, reference = 1,
     }
     rmat[rmat == -99] <- NA
     if (!missing(othervar)) {
+     
+      if(summarize.othervar=="max"){variab1=apply(varmat, 1, max,na.rm=T)}
+      if(summarize.othervar=="min"){variab1=apply(varmat, 1, min,na.rm=T)}
+      if(summarize.othervar=="mean"){variab1=apply(varmat, 1, mean,na.rm=T)}
       toreturn = list(ns = ns, nt = nt, na = na, t = tmat2, 
-                      r = rmat, n = nmat, ref = refer, variab =apply(varmat,1,max))
+                      r = rmat, n = nmat, ref = refer, variab = variab1)
     }
     else {
       toreturn = list(ns = ns, nt = nt, na = na, t = tmat2, 
                       r = rmat, n = nmat, ref = refer)
     }
   }
+  
   return(toreturn)
 }
