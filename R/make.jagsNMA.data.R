@@ -1,12 +1,11 @@
 make.jagsNMA.data=function (studyid, r, n, y, sd, t, type = "cont", data, reference = 1, 
-          othervar = NA,summarize.othervar="max") 
+                            othervar = NA,summarize.othervar="max") 
 {
   data$idd = eval(substitute(studyid), data)
   data$tt = eval(substitute(t), data)
   n = data$n = eval(substitute(n), data)
   idd = data$idd
   idd = as.numeric(as.factor(idd))
-  print(idd)
   tt = data$tt
   ns = length(unique(idd))
   nt = length(unique(tt))
@@ -20,6 +19,9 @@ make.jagsNMA.data=function (studyid, r, n, y, sd, t, type = "cont", data, refere
     refer = sort(unique(t))[sort(unique(tt)) == reference]
     print(out)
   }
+  
+  
+  
   maxnrofarms = max(table(idd))
   nofarms <- length(idd)
   armsenumerate = unlist(sapply(na, seq))
@@ -83,7 +85,7 @@ make.jagsNMA.data=function (studyid, r, n, y, sd, t, type = "cont", data, refere
     }
     rmat[rmat == -99] <- NA
     if (!missing(othervar)) {
-     
+      
       if(summarize.othervar=="max"){variab1=apply(varmat, 1, max,na.rm=T)}
       if(summarize.othervar=="min"){variab1=apply(varmat, 1, min,na.rm=T)}
       if(summarize.othervar=="mean"){variab1=apply(varmat, 1, mean,na.rm=T)}
