@@ -1,5 +1,5 @@
-make.jagsNMA.data=function (studyid, r, n, y, sd, t, type = "cont", data, reference = 1, 
-                            othervar = NA,summarize.othervar="max") 
+make.jagsNMA.data=function (studyid, r, n, y, sd, t, type = "cont", data, reference = 1,
+                            othervar = NA,summarize.othervar="max")
 {
   data$idd = eval(substitute(studyid), data)
   data$tt = eval(substitute(t), data)
@@ -14,14 +14,14 @@ make.jagsNMA.data=function (studyid, r, n, y, sd, t, type = "cont", data, refere
   t = as.numeric(as.factor(tt))
   if (!identical(t, tt)) {
     print("Note: the treatments have been renamed as follows")
-    out <- cbind.data.frame(`old names` = sort(unique(tt)), 
+    out <- cbind.data.frame(`old names` = sort(unique(tt)),
                             `new names` = sort(unique(t)))
     refer = sort(unique(t))[sort(unique(tt)) == reference]
     print(out)
   }
-  
-  
-  
+else{refer=reference}
+
+
   maxnrofarms = max(table(idd))
   nofarms <- length(idd)
   armsenumerate = unlist(sapply(na, seq))
@@ -38,7 +38,7 @@ make.jagsNMA.data=function (studyid, r, n, y, sd, t, type = "cont", data, refere
   }
   nmat[nmat == -99] <- NA
   if (!missing(othervar)) {
-    variable = data$variable = eval(substitute(othervar), 
+    variable = data$variable = eval(substitute(othervar),
                                     data)
     varmat <- matrix(NA, nrow = ns, ncol = nt)
     for (i in 1:nofarms) {
@@ -63,17 +63,17 @@ make.jagsNMA.data=function (studyid, r, n, y, sd, t, type = "cont", data, refere
     denominator = sqrt(tapply(n, idd, sum) - na)
     pooled.sd = nominator/denominator
     if (!missing(othervar)) {
-      
+
       if(summarize.othervar=="max"){variab1=apply(varmat, 1, max,na.rm=T)}
       if(summarize.othervar=="min"){variab1=apply(varmat, 1, min,na.rm=T)}
       if(summarize.othervar=="mean"){variab1=apply(varmat, 1, mean,na.rm=T)}
-      toreturn = list(ns = ns, nt = nt, na = na, t = tmat2, 
-                      y = ymat, prec = precmat, pooled.sd = pooled.sd, 
+      toreturn = list(ns = ns, nt = nt, na = na, t = tmat2,
+                      y = ymat, prec = precmat, pooled.sd = pooled.sd,
                       ref = refer, variab = variab1)
     }
     else {
-      toreturn = list(ns = ns, nt = nt, na = na, t = tmat2, 
-                      y = ymat, prec = precmat, pooled.sd = pooled.sd, 
+      toreturn = list(ns = ns, nt = nt, na = na, t = tmat2,
+                      y = ymat, prec = precmat, pooled.sd = pooled.sd,
                       ref = refer)
     }
   }
@@ -85,18 +85,18 @@ make.jagsNMA.data=function (studyid, r, n, y, sd, t, type = "cont", data, refere
     }
     rmat[rmat == -99] <- NA
     if (!missing(othervar)) {
-      
+
       if(summarize.othervar=="max"){variab1=apply(varmat, 1, max,na.rm=T)}
       if(summarize.othervar=="min"){variab1=apply(varmat, 1, min,na.rm=T)}
       if(summarize.othervar=="mean"){variab1=apply(varmat, 1, mean,na.rm=T)}
-      toreturn = list(ns = ns, nt = nt, na = na, t = tmat2, 
+      toreturn = list(ns = ns, nt = nt, na = na, t = tmat2,
                       r = rmat, n = nmat, ref = refer, variab = variab1)
     }
     else {
-      toreturn = list(ns = ns, nt = nt, na = na, t = tmat2, 
+      toreturn = list(ns = ns, nt = nt, na = na, t = tmat2,
                       r = rmat, n = nmat, ref = refer)
     }
   }
-  
+
   return(toreturn)
 }
