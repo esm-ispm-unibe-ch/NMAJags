@@ -5,7 +5,8 @@ make.jagsNMA.data=function (studyid, r, n, y, sd, t, type = "cont", data, refere
   data$tt = eval(substitute(t), data)
   n = data$n = eval(substitute(n), data)
   idd = data$idd
-  idd = as.numeric(as.factor(idd))
+  idd = factor(idd, levels=unique(data$idd))
+  idd = as.numeric(as.numeric(idd))
   tt = data$tt
   ns = length(unique(idd))
   nt = length(unique(tt))
