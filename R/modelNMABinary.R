@@ -48,7 +48,30 @@ modelNMABinary=function(){
   
   for(j in 1:(ref-1)){ORref[j]<- exp(d[j] - d[ref])}
   for(j in (ref+1):nt) {ORref[j]<- exp(d[j] - d[ref])}
-  #Ranking of treatments#
   
- 
+  #Predictions
+  for (i in 1:(nt - 1)) {
+    for (j in (i + 1):nt) {
+      predLOR[j, i] ~ dnorm(LOR[j, i], prec)
+      predOR[j, i] = exp(predLOR[j, i])
+    }
+  }
+  
+  #Ranking of treatments
+  order[1:nt] <- rank(d[1:nt])
+  for (i in 1:nt) {
+    most.effective[i] <- equals(order[i], 1)
+    for (j in 1:nt) {
+      effectiveness[i, j] <- equals(order[i], j)
+    }
+  }
+  for (i in 1:nt) {
+    for (j in 1:nt) {
+      cumeffectiveness[i, j] <- sum(effectiveness[i, 1:j])
+    }
+  }
+  for (i in 1:nt) {
+    SUCRA[i] <- sum(cumeffectiveness[i, 1:(nt - 1)])/(nt-1)
+  }
+  
 }
