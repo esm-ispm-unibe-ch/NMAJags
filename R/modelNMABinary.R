@@ -58,7 +58,7 @@ modelNMABinary=function(){
   }
   
   #Ranking of treatments
-  order[1:nt] <- rank(d[1:nt])
+  order[1:nt] <- rank(-1*d[1:nt]) # if OR > 1 desirable, else rank(d[1:nt])
   for (i in 1:nt) {
     most.effective[i] <- equals(order[i], 1)
     for (j in 1:nt) {
